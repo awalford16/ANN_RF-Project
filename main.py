@@ -1,8 +1,8 @@
-from data_processing import DataProcessing
+from data_processing import Data
 import os
 
 def main():
-    dp = DataProcessing(os.path.join('data', 'nuclear_plants.csv'))
+    dp = Data('nuclear_plants.csv')
     
     # Normalise data to scale values
     # dp.norm_data()
@@ -10,9 +10,10 @@ def main():
     print(dp.data.head())
     print(dp.get_mean())
     print(dp.get_stan_dev())
-    print(dp.data.min())
-    print(dp.data.max())
-    print(dp.data.median())
+    print(dp.get_min())
+    print(dp.get_max())
+    print(dp.get_median())
+    print(dp.get_missing_value_count())
 
 if __name__ == '__main__':
     main()
