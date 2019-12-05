@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 class Plot:
     def data_box_plot(self, data, col1, col2):
