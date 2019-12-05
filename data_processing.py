@@ -32,9 +32,15 @@ class Data:
 
     # Identify missing values within dataset
     def get_missing_value_count(self):
-        # Get number of missing values in each column (axis = 0)
+        # Get number of missing values in each column
         return self.data.isnull().sum()
 
+    # Get the number of features
+    def get_feature_count(self):
+        # Get the number of columns in each observation (Use first observation for column count)
+        return self.data.count(axis=1)[0]
+
     def norm_data(self):
+        # Ignore data that is not numerical
         data = self.data.select_dtypes(include=[np.number])
         self.data = (data-data.min())/(data.max()-data.min())

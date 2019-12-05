@@ -14,6 +14,7 @@ def main():
     print(dp.get_max())
     print(dp.get_median())
     print(dp.get_missing_value_count())
+    print(dp.get_feature_count())
 
 if __name__ == '__main__':
     main()
