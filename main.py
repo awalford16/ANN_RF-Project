@@ -17,7 +17,7 @@ def main():
     # print(dp.get_feature_count())
     # print(f"Variance: \n{dp.get_variance()}")
 
-    # bx_plt = Plot()
+    bx_plt = Plot()
     print(bx_plt.data_box_plot(dp.data, 'Status', 'Vibration_sensor_1'), pylab.show())
     print(bx_plt.data_density_plot(dp.data, 'Status', 'Vibration_sensor_2'), pylab.show())
 
