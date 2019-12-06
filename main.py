@@ -22,5 +22,9 @@ def main():
     print(bx_plt.data_box_plot(plant_data.data, 'Status', 'Vibration_sensor_1'), pylab.show())
     print(bx_plt.data_density_plot(plant_data.data, 'Status', 'Vibration_sensor_2'), pylab.show())
 
+    # Standardise the data
+    plant_data.stand_data()
+    print(plant_data.data.head())
+
 if __name__ == '__main__':
     main()

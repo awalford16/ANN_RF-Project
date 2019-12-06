@@ -52,7 +52,11 @@ class Data:
     # Standardise the data
     def stand_data(self):
         data = self.data.select_dtypes(include=[np.number])
+        # Externally store status data
+        status_data = self.data['Status']
         self.data = ((data-data.mean())/(data.std(axis=0)))
+        # Append status data after standardisation
+        self.data['Status'] = status_data
 
     # Split the data by a requested %
     def split_data(self, train_split):
@@ -64,4 +68,5 @@ class Data:
         train = data[:percent]
         test = data[percent:]
 
-        return train, test
+        # Return training and test splits, separating the target variable
+        return train.loc[:, train.columns != 'Status'], train['Status'], test.loc[:, test.columns != 'Status'], test['Status']
