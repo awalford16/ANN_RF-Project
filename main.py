@@ -8,16 +8,16 @@ def main():
     # Normalise data to scale values
     # dp.norm_data()
 
-    # print(dp.data.head())
-    # print(dp.get_mean())
-    # print(dp.get_stan_dev())
-    # print(dp.get_min())
-    # print(dp.get_max())
-    # print(dp.get_median())
+    # print(f"Mean: \n{dp.get_mean()}")
+    # print(f"Standard Deviation: \n{dp.get_stan_dev()}")
+    # print(f"Minimum: \n{dp.get_min()}")
+    # print(f"Maximum: \n{dp.get_max()}")
+    # print(f"Median: \n{dp.get_median()}")
     # print(dp.get_missing_value_count())
     # print(dp.get_feature_count())
+    # print(f"Variance: \n{dp.get_variance()}")
 
-    bx_plt = Plot()
+    # bx_plt = Plot()
     print(bx_plt.data_box_plot(dp.data, 'Status', 'Vibration_sensor_1'), pylab.show())
     print(bx_plt.data_density_plot(dp.data, 'Status', 'Vibration_sensor_2'), pylab.show())
 

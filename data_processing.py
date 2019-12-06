@@ -48,3 +48,20 @@ class Data:
         # Ignore data that is not numerical
         data = self.data.select_dtypes(include=[np.number])
         self.data = (data-data.min())/(data.max()-data.min())
+
+    # Standardise the data
+    def stand_data(self):
+        data = self.data.select_dtypes(include=[np.number])
+        self.data = ((data-data.mean())/(data.std(axis=0)))
+
+    # Split the data by a requested %
+    def split_data(self, train_split):
+        # Shuffle the data
+        data = self.data.sample(frac=1)
+
+        # Get percentages of data and assign as training and test sets
+        percent = int((data.shape[0]) * train_split)
+        train = data[:percent]
+        test = data[percent:]
+
+        return train, test
