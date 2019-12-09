@@ -35,16 +35,25 @@ def main():
     train_x, train_y, test_x, test_y = plant_data.split_data(0.9, 'Status')
 
     # Create a neural net with 2 hidden layers using standardised nuclear plant data
-    net = NeuralNet(train_x.shape[1], 250, 2, 1, 0.2)
+    net = NeuralNet(train_x.shape[1], 500, 2, 1, 0.7)
 
     # Create empty array to store results
-    results = np.zeros((1, 513))
+    results = np.zeros(len(train_x.values))
+    errors = np.zeros(len(train_x.values))
 
-    for m in range(5):
-        # for i in range(len(train_x.values)):
-        net.process(train_x.values[-1])
-        error = net.process_error(train_y.values[-1])
-        print((net.values[:12], net.values[-1], train_y.values[-1], error))
+    EPOCHS = 3
+    for i in range(len(train_x.values)):
+        print(f'{i + 1} OUT OF {len(train_x.values)}')
+        for m in range(EPOCHS):
+            net.feed_forward(train_x.values[i])
+            error = net.back_propagation(train_y.values[i])
+            
+            output = (net.values[:12], net.values[-1], train_y.values[-1], error)
+            print (output)
+
+        # Append to overall arrays
+        results[i] = net.values[-1]
+        errors[i] = error
 
 if __name__ == '__main__':
     main()

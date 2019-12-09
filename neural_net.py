@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import random
 
 class NeuralNet:
     def __init__(self, inputs, hidden, layers, outputs, rate):
@@ -20,8 +21,15 @@ class NeuralNet:
         self.output_inputs = inputs + (hidden * (layers - 1))
 
         # Create a matrix to contain random weights based on amount of nodes
-        self.weights = np.random.random((self.total, self.total))
-        self.thresholds = np.random.random(self.total)
+        self.weights = np.zeros((self.total, self.total))
+        self.bias = np.zeros(self.total)
+        
+        #random.seed(10000)
+        # Set radomised intial values for bias and weights
+        for i in range(self.input_nodes, self.total):
+            self.bias[i] = random.random() / random.random()
+            for j in range(i + 1, self.total):
+                self.weights[i][j] = random.random() - 1
 
     # Functionality within hidden layer
     def hidden_layer(self, input_min, input_max):
@@ -33,8 +41,8 @@ class NeuralNet:
             for j in range(input_min, input_max):
                 weight += self.weights[j][i] * self.values[j]
             
-            weight -= self.thresholds[i]
-            
+            weight += self.bias[i]
+            #print(self.sigmoid(weight))
             # Sigmoid function as non-linear activation function
             self.values[i] = self.sigmoid(weight)
 
@@ -50,24 +58,25 @@ class NeuralNet:
                 # Randomised weight multiplied by data values
                 weight += self.weights[j][i] * self.values[j]
 
-            weight -= self.thresholds[i]
+            weight += self.bias[i]
 
             # logistic function
             self.values[i] = self.sigmoid(weight)
 
     # set the data for the input values
     def set_input_data(self, data):
+        # Foreach data feature, assign it to the corresponding value index
         for i in range(data.shape[0]):
             self.values[i] = data[i]
 
     # Run neural net process
-    def process(self, data):
+    def feed_forward(self, data):
         # Set values based on passed in data
         self.set_input_data(data)
-        print(self.weights)
 
         # Loop through each hidden layer
         for i in range(self.hidden_layers):
+            print(f'Processing Hidden Layer {i + 1}')
             # If first hidden layer, input indexes are frominput layer
             if i == 0:
                 self.hidden_layer(0, self.input_nodes)
@@ -80,7 +89,7 @@ class NeuralNet:
         self.output_layer(self.output_inputs, self.output_inputs + self.hidden_nodes)
 
     # Calculate error of prediction
-    def process_error(self, expected):
+    def back_propagation(self, expected):
         squared_error = 0.0
 
         # Loop through output nodes
