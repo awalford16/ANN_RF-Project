@@ -1,6 +1,6 @@
 from data_processing import Data
 from plotting import Plot
-from neural_net import NeuralNet
+from section3 import Models
 import pylab
 import numpy as np
 
@@ -34,26 +34,12 @@ def main():
     # Split data into train and test
     train_x, train_y, test_x, test_y = plant_data.split_data(0.9, 'Status')
 
-    # Create a neural net with 2 hidden layers using standardised nuclear plant data
-    net = NeuralNet(train_x.shape[1], 500, 2, 1, 0.7)
+    print('---------- TRAINING MODELS ----------')
+    models = Models(train_x, train_y, test_x, test_y)
+    nn_weights = models.train_nn()
+    
 
-    # Create empty array to store results
-    results = np.zeros(len(train_x.values))
-    errors = np.zeros(len(train_x.values))
-
-    EPOCHS = 3
-    for i in range(len(train_x.values)):
-        print(f'{i + 1} OUT OF {len(train_x.values)}')
-        for m in range(EPOCHS):
-            net.feed_forward(train_x.values[i])
-            error = net.back_propagation(train_y.values[i])
-            
-            output = (net.values[:12], net.values[-1], train_y.values[-1], error)
-            print (output)
-
-        # Append to overall arrays
-        results[i] = net.values[-1]
-        errors[i] = error
+    print('---------- TESTING MODELS ----------')
 
 if __name__ == '__main__':
     main()

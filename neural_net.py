@@ -76,7 +76,6 @@ class NeuralNet:
 
         # Loop through each hidden layer
         for i in range(self.hidden_layers):
-            print(f'Processing Hidden Layer {i + 1}')
             # If first hidden layer, input indexes are frominput layer
             if i == 0:
                 self.hidden_layer(0, self.input_nodes)
