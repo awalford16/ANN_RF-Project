@@ -10,11 +10,13 @@ class Models:
         self.test_x = test_x
         self.test_y = test_y
 
-        # Create a neural net with 2 hidden layers using standardised nuclear plant data
-        self.nn = NeuralNet(self.train_x.shape[1], 500, 2, 1, 0.7)
-
+    def create_forest_model(self, trees):
         # Initialise random forest model
-        self.rf = RandomForest(1000, 5)
+        self.rf = RandomForest(trees, 50)
+
+    def create_nn_model(self, hidden_nodes):
+        # Create a neural net with 2 hidden layers using standardised nuclear plant data
+        self.nn = NeuralNet(self.train_x.shape[1], hidden_nodes, 2, 1, 0.7)
 
     # Use the NeuralNetwork class to train a NN
     def train_nn(self):
@@ -50,5 +52,7 @@ class Models:
     def train_forest(self):
         self.rf.train_forest(self.train_x, self.train_y)
 
-
+    def test_forest(self):
+        train, test = self.rf.get_forest_error(self.train_x, self.train_y, self.test_x, self.test_y)
+        return train, test
     
