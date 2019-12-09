@@ -29,7 +29,7 @@ class NeuralNet:
         for i in range(self.input_nodes, self.total):
             self.bias[i] = random.random() / random.random()
             for j in range(i + 1, self.total):
-                self.weights[i][j] = random.random() - 1
+                self.weights[i][j] = random.random() * 0.2 - 0.5
 
     # Functionality within hidden layer
     def hidden_layer(self, input_min, input_max):
@@ -119,3 +119,9 @@ class NeuralNet:
     # Sigmoid function to act as activiation function
     def sigmoid(self, x):
         return 1 / (1 + math.exp(-x))
+
+    # Get the accuracy of the neural network
+    def get_accuracy(self, pred, actual):
+        if math.sqrt((pred - actual) ** 2) > 0.5:
+            return 0
+        return 1

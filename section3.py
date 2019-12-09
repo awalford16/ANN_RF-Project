@@ -7,9 +7,11 @@ class Models:
     def __init__(self, train_x, train_y, test_x, test_y):
         self.train_x = train_x
         self.train_y = train_y
+        self.test_x = test_x
+        self.test_y = test_y
 
         # Create a neural net with 2 hidden layers using standardised nuclear plant data
-        self.nn = NeuralNet(self.train_x.shape[1], 50, 2, 1, 0.7)
+        self.nn = NeuralNet(self.train_x.shape[1], 500, 2, 1, 0.7)
 
         # Initialise random forest model
         self.rf = RandomForest(1000, 5)
@@ -32,8 +34,17 @@ class Models:
 
         plt = Plot()
         plt.nn_error_plot(total_error)
-        # Get the weights adjusted by training
-        return self.nn.weights
+
+    # Test the NN
+    def test_nn(self):
+        total = 0
+        for i in range(len(self.test_x.values)):
+            # With weights and biases set, apply testing data
+            self.nn.feed_forward(self.test_x.values[i])
+            total += self.nn.get_accuracy(self.nn.values[-1], self.test_y.values[i])
+
+        acc = (total / len(self.test_x.values)) * 100
+        print(f'{acc}% accurate')
 
     # Train a random forest model
     def train_forest(self):

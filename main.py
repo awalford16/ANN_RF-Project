@@ -36,7 +36,8 @@ def main():
 
     print('---------- TRAINING MODELS ----------')
     models = Models(train_x, train_y, test_x, test_y)
-    nn_weights = models.train_nn()
+    models.train_nn()
+    models.test_nn()
     
 
     print('---------- TESTING MODELS ----------')
