@@ -47,7 +47,11 @@ class Data:
     def norm_data(self):
         # Ignore data that is not numerical
         data = self.data.select_dtypes(include=[np.number])
+        # Externally store status data
+        status_data = self.data['Status']
         self.data = (data-data.min())/(data.max()-data.min())
+        # Append status data after standardisation
+        self.data['Status'] = status_data
 
     # Standardise the data
     def stand_data(self):
@@ -59,7 +63,7 @@ class Data:
         self.data['Status'] = status_data
 
     # Split the data by a requested %
-    def split_data(self, train_split):
+    def split_data(self, train_split, target):
         # Shuffle the data
         data = self.data.sample(frac=1)
 
@@ -69,4 +73,8 @@ class Data:
         test = data[percent:]
 
         # Return training and test splits, separating the target variable
-        return train.loc[:, train.columns != 'Status'], train['Status'], test.loc[:, test.columns != 'Status'], test['Status']
+        return train.loc[:, train.columns != target], train[target], test.loc[:, test.columns != target], test[target]
+
+    def cat_to_num(self, target):
+        self.data[target] = self.data[target].astype('category')
+        self.data[target] = self.data[target].cat.codes
