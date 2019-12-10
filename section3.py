@@ -22,17 +22,21 @@ class Models:
     def train_nn(self):
         EPOCHS = 10
         total_error = np.zeros(EPOCHS)
+        predictions = np.zeros(len(self.train_x.values))
 
         for m in range(EPOCHS):
             for i in range(len(self.train_x.values)):
-                print(f'{i + 1} OUT OF {len(self.train_x.values)}')
+                print(f"{i + 1} OUT OF {len(self.train_x.values)}")
+                # Pass data through NN
                 self.nn.feed_forward(self.train_x.values[i])
-                error = self.nn.back_propagation(self.train_y.values[i])
-                
-                total_error[m] += error
+                # The prediction will be created from the output node
+                predictions[i] = self.nn.values[-1]
+                print(predictions[i])
 
-                output = (self.nn.values[:12], self.nn.values[-1], self.train_y.values[-1], error)
-                print (output)
+            # Update the weights based on the data error
+            total_error[m] = self.nn.back_propagation(self.train_y.values, predictions)
+
+            print (total_error[m])
 
         plt = Plot()
         plt.nn_error_plot(total_error)

@@ -38,26 +38,27 @@ def main():
 
     models = Models(train_x, train_y, test_x, test_y)
 
-    num_trees = [10, 50, 100, 1000, 5000, 10000]
-    train_acc = np.zeros(len(num_trees))
-    test_acc = np.zeros(len(num_trees))
+    # nodes = [10, 50, 100, 1000, 5000, 10000]
+    nodes = [20]
+    train_acc = np.zeros(len(nodes))
+    test_acc = np.zeros(len(nodes))
 
-    for i, tree in enumerate(num_trees):
+    for i, node in enumerate(nodes):
         # Create the models
-        models.create_forest_model(tree)
-    #models.train_nn()
-    #models.test_nn()
+        models.create_nn_model(node)
+        models.train_nn()
+        models.test_nn()
     
-        models.train_forest()
-        train, test = models.test_forest()
+        # models.train_forest()
+        # train, test = models.test_forest()
 
-        # Add accuracies to array for plotting
-        train_acc[i] = train
-        test_acc[i] = test
-        print(f'Training Error with {tree} Trees: {train}')
-        print(f'Testing Error with {tree} Trees: {test}')
+        # # Add accuracies to array for plotting
+        # train_acc[i] = train
+        # test_acc[i] = test
+        # print(f'Training Error with {tree} Trees: {train}')
+        # print(f'Testing Error with {tree} Trees: {test}')
 
-    plt.tree_count_plot(num_trees, train_acc, test_acc)
+    #plt.tree_count_plot(nodes, train_acc, test_acc)
 
     print('---------- Section 4 ----------')
 

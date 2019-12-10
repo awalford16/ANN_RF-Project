@@ -88,19 +88,19 @@ class NeuralNet:
         self.output_layer(self.output_inputs, self.output_inputs + self.hidden_nodes)
 
     # Calculate error of prediction
-    def back_propagation(self, expected):
+    def back_propagation(self, expected, predicted):
         squared_error = 0.0
 
-        # Loop through output nodes
-        for i in range(self.output_inputs + self.hidden_nodes, self.total):
+        # Loop through expected results
+        for i, exp in enumerate(expected):
             # find difference in expected and predicted
-            error = expected - self.values[i]
+            error = exp - predicted[i]
 
             # Square the error and set gradient based on error
             squared_error = math.pow(error, 2)
-            error_gradient = self.values[i] * (1 - self.values[i]) * error
+            error_gradient = predicted[i] * (1 - predicted[i]) * error
 
-            self.update_weights(error_gradient, i)
+            self.update_weights(error_gradient, self.total - 1)
 
         return squared_error
 
