@@ -122,6 +122,9 @@ class NeuralNet:
 
     # Get the accuracy of the neural network
     def get_accuracy(self, pred, actual):
-        if math.sqrt((pred - actual) ** 2) > 0.5:
+        # Calculate root mean squared error and determine accuracy
+        # If the RMSE is more than .5 away, respond incorrectly classified
+        if math.sqrt((actual - pred) ** 2) >= 0.5:
+            # Incorrectly classified
             return 0
         return 1
