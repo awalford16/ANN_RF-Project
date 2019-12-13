@@ -2,6 +2,7 @@ from neural_net_2 import NeuralNet
 from random_forest import RandomForest
 import numpy as np
 from plotting import Plot
+import math
 
 class Models:
     def __init__(self, train_x, train_y, test_x, test_y):
@@ -16,28 +17,55 @@ class Models:
 
     def create_nn_model(self, hidden_nodes):
         # Create a neural net with 2 hidden layers using standardised nuclear plant data
-        self.nn = NeuralNet(self.train_x, self.train_x.shape[1], hidden_nodes, 1, 0.3)
+        self.nn = NeuralNet(self.train_x.shape[1], hidden_nodes, 1, 0.5)
+
+    # divide dataset into mini batches
+    def get_mini_batches(self, train, test, batch_size):
+        batch_count = math.ceil(len(train) / batch_size)
+        x_batches = np.zeros((batch_count, batch_size, 12))
+        y_batches = np.zeros((batch_count, batch_size, 1))
+
+        for batch in range(batch_count):
+            if (batch * batch_size) + batch_size > len(train):
+                batch_size = len(train) - (batch * batch_size)
+
+            # Initialise start and finish index for batch
+            start = batch * batch_size
+            finish = start + batch_size
+
+            for i in range(batch_size):
+                x_batches[batch][i] = train[start:finish][i]
+                y_batches[batch][i] = test[start:finish][i]
+
+        return x_batches, y_batches
 
     # Use the NeuralNetwork class to train a NN
     def train_nn(self):
         EPOCHS = 10
-        total_error = np.zeros(EPOCHS)
+        total_acc = np.zeros(EPOCHS)
         # predictions = np.zeros(len(self.train_x))
 
+        x_train, y_train = self.get_mini_batches(self.train_x, self.train_y, 100)
+
+        # Run for multiple epochs to improve accuracy
         for m in range(EPOCHS):
-            total_acc = 0
+
+            acc = 0
             print(f'Epoch: {m + 1}')
-            self.nn.feed_forward(self.train_x)
+            # Process neural network in batches
+            for i, batch in enumerate(x_train):
+                self.nn.feed_forward(batch)
 
-            # Update the weights based on the data error
-            total_error[m] = self.nn.back_prop(self.train_x, self.train_y)
+                # Update the weights based on the data error
+                error = self.nn.back_prop(batch, y_train[i])
 
-            total_acc += self.nn.get_accuracy(total_error[m], self.train_y)
-
-            print(f'Accuracy: {total_acc}')
+                acc += self.nn.get_accuracy(error)
+   
+            total_acc[m] += acc / len(x_train) 
+            print(f'Accuracy: {total_acc[m]}')
 
         plt = Plot()
-        plt.nn_error_plot(total_error)
+        plt.nn_acc_plot(total_acc)
 
     # Test the NN
     def test_nn(self):

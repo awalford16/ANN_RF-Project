@@ -4,8 +4,7 @@ import math
 import random
 
 class NeuralNet():
-    def __init__(self, data, inputs, hidden, outputs, lr):
-        self.x = data
+    def __init__(self, inputs, hidden, outputs, lr):
         self.input_nodes = inputs
         self.hidden_nodes = hidden
         self.output_nodes = outputs
@@ -24,65 +23,70 @@ class NeuralNet():
 
         # Initialise the biases
         self.bias_h1 = np.zeros((1, hidden))
-        self.bias_h2 = np.zeros((1, hidden))
+        self.bias_h2 = np.zeros((1, hidden))  
         self.bias_o = np.zeros((1, outputs))
+
+    # Calculate weighted sum
+    def weighted_sum(self, inputs, weights, bias):
+        return np.dot(inputs, weights.T) + bias
 
     # Step forward and back propagation processing
     def feed_forward(self, data):
         # Process first hidden layer
-        h1 = np.dot(data, self.weights_ih.T) + self.bias_h1
-        h1_sig = self.sigmoid(h1)
-        print(h1_sig.mean())
-        self.values_h1 = h1_sig
+        h1 = self.weighted_sum(data, self.weights_ih, self.bias_h1)
+        self.values_h1 = self.sigmoid(h1)
 
         # Process 2nd hidden layer
-        h2 = np.dot(h1_sig, self.weights_hh.T) + self.bias_h2
-        h2_sig = self.sigmoid(h2)
-        print(h2_sig.mean())
-        self.values_h2 = h2_sig
+        h2 = self.weighted_sum(h1, self.weights_hh, self.bias_h2)
+        self.values_h2 = self.sigmoid(h2)
 
         # Process output layer
-        output_layer = np.dot(h2_sig, self.weights_ho.T) + self.bias_o
-        output = self.sigmoid(output_layer)
-        print(output.mean())
-        self.values_o = output
+        output = self.weighted_sum(h2, self.weights_ho, self.bias_o)
+        self.values_o = self.sigmoid(output)
+        print(self.values_o.mean())
 
     # Back propagation
     def back_prop(self, data, actual):
         # Get the difference between predicted and actual value
-        loss = np.subtract(self.values_o, actual)
+        loss = np.subtract(actual, self.values_o)
 
-        # Get squared error
-        error_sum = np.power(loss, 2).sum()
+        o_delta = loss * self.sigmoid_der(self.values_o)
 
-        # Determine derivative of output
-        error_der = self.sigmoid_der(self.values_o) 
+        o_error = np.dot(o_delta, self.weights_ho)
+        h2_delta = o_error * self.sigmoid_der(self.values_h2)
 
-        # Determine gradient of output
-        output_gradient = np.dot(loss, error_der)
+        h2_error = np.dot(h2_delta, self.weights_hh.T)
+        h1_delta = h2_error * self.sigmoid_der(self.values_h1)
         
         # Update the weights and biases between hidden layer 2 and output layer
-        self.weights_ho += self.update_weights(self.values_h2, output_gradient)
-        self.bias_o += self.update_biases(output_gradient)
+        self.weights_ho += self.update_weights(self.values_h2, loss)
+        self.bias_o += self.update_biases(loss)
 
-        hidden2_error_der = self.sigmoid_der(self.values_h2) 
-        hidden2_gradient = np.dot(output_gradient, self.weights_ho) * hidden2_error_der
+        self.weights_hh += self.update_weights(self.values_h1, h2_delta)
+        self.bias_h2 += self.update_biases(h2_delta)
 
-        # Update between two hidden nodes
-        self.weights_hh += self.update_weights(self.values_h1, hidden2_gradient)
-        self.bias_h2 += self.update_biases(hidden2_gradient)
+        self.weights_ih += self.update_weights(data, h1_delta)
+        self.bias_h1 += self.update_biases(h1_delta)
 
-        # Determine gradient of hidden layer 1
-        hidden1_error_der = self.sigmoid_der(self.values_h1)
-        hidden1_gradient = np.dot(hidden2_gradient, self.weights_hh.T) * hidden1_error_der
+        # ----------------------------------------
 
-        # Update weights and biases between inputs and first hidden layer
-        self.weights_ih += self.update_weights(data, hidden1_gradient)
-        self.bias_h1 += self.update_biases(hidden1_gradient)
+        # h2_hh = self.sigmoid_der(self.weighted_sum(self.values_h2, self.weights_ho, self.bias_o)) 
+        # h2_delta = np.dot(loss, self.weights_ho)
+        # h2_gradient = np.dot(h2_hh.T, h2_delta)
 
-        print(self.weights_hh)
+        # # Update between two hidden nodes
+        # self.weights_hh += self.update_weights(self.values_h1, h2_delta)
+        # self.bias_h2 -= self.update_biases(h2_delta)
+
+        # # Determine gradient of hidden layer 1
+        # hidden1_error_der = self.sigmoid_der(self.values_h1)
+        # hidden1_gradient = np.dot(h2_gradient, self.weights_hh.T) * hidden1_error_der
+
+        # # Update weights and biases between inputs and first hidden layer
+        # self.weights_ih += self.update_weights(data, hidden1_gradient)
+        # self.bias_h1 += self.update_biases(hidden1_gradient)
         
-        return error_sum
+        return loss
 
     # Update biases
     def update_biases(self, gradient):
@@ -100,6 +104,11 @@ class NeuralNet():
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
-    def get_accuracy(self, error_sum, actual):
+    def get_accuracy(self, error):
         # If the RMSE is more than .5 away, respond incorrectly classified
-        return error_sum / len(actual)
+        acc = 0
+        for i in error:
+            if i < 0.5:
+                acc += 1
+
+        return acc

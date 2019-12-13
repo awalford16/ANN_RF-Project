@@ -12,12 +12,12 @@ class Plot:
         # Group the data and use the data from col2 of each group
         data.groupby(col1)[col2].plot(kind='density', legend=True)
 
-    def nn_error_plot(self, error):
+    def nn_acc_plot(self, acc):
         plt.figure()
-        plt.plot(error)
-        plt.ylabel('Error')
+        plt.plot(acc)
+        plt.ylabel('Accuracy')
         plt.xlabel('Epoch')
-        plt.savefig(os.path.join('images', 'epoch_error.png'))
+        plt.savefig(os.path.join('images', 'epoch_acc.png'))
 
     def tree_count_plot(self, trees, train_accuracy, test_accuracy):
         plt.figure()
