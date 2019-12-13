@@ -18,6 +18,7 @@ class Plot:
         plt.ylabel('Accuracy')
         plt.xlabel('Epoch')
         plt.savefig(os.path.join('images', 'epoch_acc.png'))
+        plt.close()
 
     def tree_count_plot(self, trees, train_accuracy, test_accuracy):
         plt.figure()
@@ -27,3 +28,4 @@ class Plot:
         plt.xlabel('Num of Trees')
         plt.legend()
         plt.savefig(os.path.join('images', 'tree_accuracy.png'))
+        plt.close()

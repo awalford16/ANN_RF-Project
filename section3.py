@@ -15,11 +15,11 @@ class Models:
         # Initialise random forest model
         self.rf = RandomForest(trees, 50)
 
-    def create_nn_model(self, hidden_nodes):
+    def create_nn_model(self, hidden_nodes, lr):
         # Create a neural net with 2 hidden layers using standardised nuclear plant data
-        self.nn = NeuralNet(self.train_x.shape[1], hidden_nodes, 1, 0.01)
+        self.nn = NeuralNet(self.train_x.shape[1], hidden_nodes, 1, lr)
 
-    # divide dataset into mini batches
+    # divide dataset into mini batches when one epoch is too large in one go
     def get_mini_batches(self, train, test, batch_size):
         batch_count = math.ceil(len(train) / batch_size)
         x_batches = np.zeros((batch_count, batch_size, 12))
@@ -40,32 +40,25 @@ class Models:
         return x_batches, y_batches
 
     # Use the NeuralNetwork class to train a NN
-    def train_nn(self):
+    def train_nn(self, plot):
         EPOCHS = 10
         total_acc = np.zeros(EPOCHS)
-        # predictions = np.zeros(len(self.train_x))
-
-        x_train, y_train = self.get_mini_batches(self.train_x, self.train_y, 100)
 
         # Run for multiple epochs to improve accuracy
         for m in range(EPOCHS):
+            self.nn.feed_forward(self.train_x)
 
-            acc = 0
-            print(f'Epoch: {m + 1}')
-            # Process neural network in batches
-            for i, batch in enumerate(x_train):
-                self.nn.feed_forward(batch)
+            # Update the weights based on the data error
+            self.nn.back_prop(self.train_x, self.train_y.reshape(self.train_y.shape[0],1))
 
-                # Update the weights based on the data error
-                self.nn.back_prop(batch, y_train[i])
-
-                acc += self.nn.get_accuracy(y_train[i])
+            acc = self.nn.get_accuracy(self.train_y)
    
-            total_acc[m] += acc / len(x_train) 
-            print(f'Accuracy: {total_acc[m]}')
+            total_acc[m] = acc
+            # print(f'Accuracy: {total_acc[m]}')
 
-        plt = Plot()
-        plt.nn_acc_plot(total_acc)
+        if plot:
+            plt = Plot()
+            plt.nn_acc_plot(total_acc)
 
     # Test the NN
     def test_nn(self):
@@ -73,10 +66,7 @@ class Models:
         self.nn.feed_forward(self.test_x)
         total = self.nn.get_accuracy(self.test_y)
 
-        print(f'Test Accuracy: {total}%')
-
-        # acc = (total / len(self.test_x))
-        #return acc
+        return total
 
     # Train a random forest model
     def train_forest(self):

@@ -8,24 +8,25 @@ class CrossVal():
 
     # Loop through x folds and train model
     def cross_val(self, model_choice, data, count):
+        # Create array to store accuracy score for each fold
         accuracies = np.zeros(self.folds)
+
+        # Loop through folds of data
         for x in range(self.folds):
-            # Segment data into x folds
+            # Obtain fold data
             train, test = self.get_fold(x, data)
             model = Models(train.loc[:, train.columns != 'Status'], train['Status'], test.loc[:, test.columns != 'Status'], test['Status'])
         
-            # Train model with each fold
+            # Select which model to train
             if model_choice == 'rf':
-                # Pass in train and test segments
+                # Store accuracy for fold
                 accuracies[x] = self.cross_val_rf(model, train, test, count)
             elif model_choice == 'nn':
                 accuracies[x] = self.cross_val_nn(model, train, test, count)
             else:
                 print(f'{model_choice} not recognised as a model.')
-            
-            print(f'Fold {x + 1} accuracy: {accuracies[x]}')
 
-        print(f'Mean Accuracy of {model_choice}: {accuracies.mean()}')
+        print(f'Mean Accuracy of {model_choice.upper()}: {accuracies.mean():.2f}')
 
         # Return the average mean accuracy
         return accuracies.mean()
@@ -42,10 +43,10 @@ class CrossVal():
 
     def cross_val_nn(self, model, train, test, node_count):
         # Initialise NN with x nodes
-        model.create_nn_model(node_count)
+        model.create_nn_model(node_count, 0.0001)
 
         # Train the neural network with training set
-        model.train_nn()
+        model.train_nn(False)
         return model.test_nn()
 
     def get_fold(self, fold, data):
