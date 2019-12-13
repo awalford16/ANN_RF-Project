@@ -16,10 +16,10 @@ class NeuralNet():
         self.values_o = np.zeros(outputs)
 
         # Initialise the weights between -0.5 and 0.5
-        np.random.seed(1000)
-        self.weights_ih = np.random.rand(hidden, inputs) - 0.5
-        self.weights_hh = np.random.rand(hidden, hidden) - 0.5
-        self.weights_ho = np.random.rand(outputs, hidden) - 0.5
+        #np.random.seed(1000)
+        self.weights_ih = np.random.uniform(low = -0.5, high = 0.5, size= (inputs, hidden))
+        self.weights_hh = np.random.uniform(low = -0.5, high = 0.5, size = (hidden, hidden))
+        self.weights_ho = np.random.uniform(low = -0.5, high = 0.5, size= (hidden, outputs))
 
         # Initialise the biases
         self.bias_h1 = np.zeros((1, hidden))
@@ -28,7 +28,7 @@ class NeuralNet():
 
     # Calculate weighted sum
     def weighted_sum(self, inputs, weights, bias):
-        return np.dot(inputs, weights.T) + bias
+        return np.dot(inputs, weights) + bias
 
     # Step forward and back propagation processing
     def feed_forward(self, data):
@@ -43,30 +43,30 @@ class NeuralNet():
         # Process output layer
         output = self.weighted_sum(h2, self.weights_ho, self.bias_o)
         self.values_o = self.sigmoid(output)
-        print(self.values_o.mean())
+        print(self.values_o)
+
+    def loss_der(self, values, loss):
+        return (2 * loss) * self.sigmoid_der(values)
 
     # Back propagation
     def back_prop(self, data, actual):
         # Get the difference between predicted and actual value
         loss = np.subtract(actual, self.values_o)
 
-        o_delta = loss * self.sigmoid_der(self.values_o)
-
-        o_error = np.dot(o_delta, self.weights_ho)
-        h2_delta = o_error * self.sigmoid_der(self.values_h2)
-
-        h2_error = np.dot(h2_delta, self.weights_hh.T)
-        h1_delta = h2_error * self.sigmoid_der(self.values_h1)
+        # Process hidden layer 2
+        ho_gradient = self.loss_der(self.values_o, loss)
+        hh_gradient = np.dot(self.loss_der(self.values_o, loss), self.weights_ho.T) * self.sigmoid_der(self.values_h2)
+        ih_gradient = np.dot(self.loss_der(self.values_h2, loss), self.weights_hh.T) * self.sigmoid_der(self.values_h1)
         
         # Update the weights and biases between hidden layer 2 and output layer
-        self.weights_ho += self.update_weights(self.values_h2, loss)
-        self.bias_o += self.update_biases(loss)
+        self.weights_ho += self.update_weights(self.values_h2, ho_gradient)
+        self.bias_o += self.update_biases(ho_gradient)
 
-        self.weights_hh += self.update_weights(self.values_h1, h2_delta)
-        self.bias_h2 += self.update_biases(h2_delta)
+        self.weights_hh += self.update_weights(self.values_h1, hh_gradient)
+        self.bias_h2 += self.update_biases(hh_gradient)
 
-        self.weights_ih += self.update_weights(data, h1_delta)
-        self.bias_h1 += self.update_biases(h1_delta)
+        self.weights_ih += self.update_weights(data, ih_gradient)
+        self.bias_h1 += self.update_biases(ih_gradient)
 
         # ----------------------------------------
 
@@ -85,8 +85,6 @@ class NeuralNet():
         # # Update weights and biases between inputs and first hidden layer
         # self.weights_ih += self.update_weights(data, hidden1_gradient)
         # self.bias_h1 += self.update_biases(hidden1_gradient)
-        
-        return loss
 
     # Update biases
     def update_biases(self, gradient):
@@ -94,7 +92,7 @@ class NeuralNet():
 
     # Update the weights
     def update_weights(self, inputs, gradient):
-        return (self.learning_rate * np.dot(inputs.T, gradient)).T
+        return self.learning_rate * np.dot(inputs.T, gradient)
 
     # Get the derivative of the sigmoid function
     def sigmoid_der(self, x):
@@ -104,11 +102,13 @@ class NeuralNet():
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
-    def get_accuracy(self, error):
+    def get_accuracy(self, actual):
         # If the RMSE is more than .5 away, respond incorrectly classified
+        loss = np.subtract(actual, self.values_o)
         acc = 0
-        for i in error:
-            if i < 0.5:
+
+        for i in loss:
+            if abs(i) < 0.5:
                 acc += 1
 
         return acc

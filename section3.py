@@ -17,7 +17,7 @@ class Models:
 
     def create_nn_model(self, hidden_nodes):
         # Create a neural net with 2 hidden layers using standardised nuclear plant data
-        self.nn = NeuralNet(self.train_x.shape[1], hidden_nodes, 1, 0.5)
+        self.nn = NeuralNet(self.train_x.shape[1], hidden_nodes, 1, 0.01)
 
     # divide dataset into mini batches
     def get_mini_batches(self, train, test, batch_size):
@@ -57,9 +57,9 @@ class Models:
                 self.nn.feed_forward(batch)
 
                 # Update the weights based on the data error
-                error = self.nn.back_prop(batch, y_train[i])
+                self.nn.back_prop(batch, y_train[i])
 
-                acc += self.nn.get_accuracy(error)
+                acc += self.nn.get_accuracy(y_train[i])
    
             total_acc[m] += acc / len(x_train) 
             print(f'Accuracy: {total_acc[m]}')
@@ -71,7 +71,9 @@ class Models:
     def test_nn(self):
         #total = 0
         self.nn.feed_forward(self.test_x)
-        #total += self.nn.get_accuracy(self.nn.values[-1], self.test_y[i])
+        total = self.nn.get_accuracy(self.test_y)
+
+        print(f'Test Accuracy: {total}%')
 
         # acc = (total / len(self.test_x))
         #return acc

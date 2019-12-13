@@ -47,6 +47,7 @@ def main():
     # Train Nerual Network with 500 nodes and 2 hidden layers
 
     # Apply test data to NN
+    #models.test_nn()
 
     # Create Random forest with 1000 trees and 5 or 50 leaf nodes
 
