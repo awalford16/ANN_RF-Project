@@ -16,11 +16,11 @@ class NeuralNet():
         self.values_h2 = np.zeros(hidden)
         self.values_o = np.zeros(outputs)
 
-        # Initialise the weights between 0 and 0.25
+        # Initialise the weights between -0.5 and 0.5
         np.random.seed(1000)
-        self.weights_ih = np.random.rand(hidden, inputs) 
-        self.weights_hh = np.random.rand(hidden, hidden) 
-        self.weights_ho = np.random.rand(outputs, hidden)
+        self.weights_ih = np.random.rand(hidden, inputs) - 0.5
+        self.weights_hh = np.random.rand(hidden, hidden) - 0.5
+        self.weights_ho = np.random.rand(outputs, hidden) - 0.5
 
         # Initialise the biases
         self.bias_h1 = np.zeros((1, hidden))
@@ -61,31 +61,23 @@ class NeuralNet():
         # Determine gradient of output
         output_gradient = np.dot(loss, error_der)
         
-        # Update the weights between hidden layer 2 and output layer
-        delta_ho = self.learning_rate * np.dot(self.values_h2.T, output_gradient)
-        self.weights_ho += delta_ho.T
-
+        # Update the weights and biases between hidden layer 2 and output layer
+        self.weights_ho += self.update_weights(self.values_h2, output_gradient)
         self.bias_o += self.update_biases(output_gradient)
 
         hidden2_error_der = self.sigmoid_der(self.values_h2) 
         hidden2_gradient = np.dot(output_gradient, self.weights_ho) * hidden2_error_der
 
         # Update between two hidden nodes
-        delta_hh = self.learning_rate * np.dot(self.values_h1.T, hidden2_gradient)
-        self.weights_hh += delta_hh.T
-
-        # Update thresholds between hidden layer 2 and output layer
+        self.weights_hh += self.update_weights(self.values_h1, hidden2_gradient)
         self.bias_h2 += self.update_biases(hidden2_gradient)
 
         # Determine gradient of hidden layer 1
         hidden1_error_der = self.sigmoid_der(self.values_h1)
         hidden1_gradient = np.dot(hidden2_gradient, self.weights_hh.T) * hidden1_error_der
 
-        # Update weights between inputs and first hidden layer
-        delta_ih = self.learning_rate * np.dot(data.T, hidden1_gradient)
-        self.weights_ih += delta_ih.T
-
-        # Update biases between input layer and hidden layer 1
+        # Update weights and biases between inputs and first hidden layer
+        self.weights_ih += self.update_weights(data, hidden1_gradient)
         self.bias_h1 += self.update_biases(hidden1_gradient)
 
         print(self.weights_hh)
@@ -94,8 +86,11 @@ class NeuralNet():
 
     # Update biases
     def update_biases(self, gradient):
-        delta = self.learning_rate * np.sum(gradient, axis=0)
-        return delta
+        return self.learning_rate * np.sum(gradient, axis=0)
+
+    # Update the weights
+    def update_weights(self, inputs, gradient):
+        return (self.learning_rate * np.dot(inputs.T, gradient)).T
 
     # Get the derivative of the sigmoid function
     def sigmoid_der(self, x):

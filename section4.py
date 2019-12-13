@@ -3,12 +3,15 @@ import numpy as np
 import pandas as pd
 
 class CrossVal():
+    def __init__(self, folds):
+        self.folds = folds
+
     # Loop through x folds and train model
-    def cross_val(self, model_choice, folds, data, count):
-        accuracies = np.zeros(folds)
-        for x in range(folds):
+    def cross_val(self, model_choice, data, count):
+        accuracies = np.zeros(self.folds)
+        for x in range(self.folds):
             # Segment data into x folds
-            train, test = self.get_fold(x, folds, data)
+            train, test = self.get_fold(x, data)
             model = Models(train.loc[:, train.columns != 'Status'], train['Status'], test.loc[:, test.columns != 'Status'], test['Status'])
         
             # Train model with each fold
@@ -45,9 +48,9 @@ class CrossVal():
         model.train_nn()
         return model.test_nn()
 
-    def get_fold(self, fold, k, data):
+    def get_fold(self, fold, data):
         # Get approximate size of each fold
-        size = int(len(data.values) / k)
+        size = int(len(data.values) / self.folds)
         start = size * fold
 
         # Get test portion of data
