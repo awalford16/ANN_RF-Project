@@ -55,7 +55,10 @@ class Models:
             acc = self.nn.get_accuracy(self.train_y.reshape(self.train_y.shape[0],1))
    
             total_acc[m] = acc
-            print(f'Epoch: {m + 1}, Accuracy: {total_acc[m]:.2f}')
+
+            # Print out every 10 epochs
+            if (m + 1) % 10 == 0:
+                print(f'Epoch: {m + 1}, Accuracy: {total_acc[m]:.2f}')
 
         if plot:
             plt = Plot()
@@ -64,7 +67,7 @@ class Models:
     # Test the NN
     def test_nn(self):
         self.nn.feed_forward(self.test_x)
-        total = self.nn.get_accuracy(self.test_y)
+        total = self.nn.get_accuracy(self.test_y.reshape(self.test_y.shape[0],1))
 
         return total
 

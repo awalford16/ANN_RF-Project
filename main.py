@@ -38,27 +38,19 @@ def main():
     print('---------- Section 3 ----------')
     # Split data into train and test based on target variable Status
     train_x, train_y, test_x, test_y = plant_data.split_data(0.9, 'Status')
-    # epochs = [1,5,10,20]
-    # acc = {}
 
     # for e in epochs:
     models = Models(train_x, train_y, test_x, test_y)
-    #     net = NeuralNet(500, 0.01, e)
     
     # Create Neural Network
     models.create_nn_model(500, 0.0001)
 
     # Train Nerual Network with 500 nodes and 2 hidden layers
-    #     net.train_nn(train_x, train_y)
-    models.train_nn(True, 100)
+    models.train_nn(True, 150)
 
     # Apply test data to NN
-    #     acc[e] = net.test_nn(test_x, test_y)
-    #     print(f'Epochs: {e}, NN Accuracy: {acc[e]:.2f}')
     acc = models.test_nn()
-    print(acc)
-
-    # plt.nn_acc_plot(acc)
+    print(f'NN Testing Accuracy: {acc}')
 
     # Create Random forest with 1000 trees and 5 or 50 leaf nodes
 
@@ -68,30 +60,30 @@ def main():
 
     print('---------- Section 4 ----------')
     # Get the training segment of data including testing set
-    # data = pd.concat([train_x, train_y], axis=1)
-    # cv = CrossVal(10)
-    # highest_acc = 0.5
-    # best_model = ''
+    data = pd.concat([train_x, train_y], axis=1)
+    cv = CrossVal(10)
+    highest_acc = 0.5
+    best_model = ''
 
-    # # Cross validate NN with 50, 500 and 1000 nodes
-    # for i in [50, 500, 1000]:
-    #     print(f'Cross validating NN with {i} nodes')
-    #     accuracy = cv.cross_val('nn', data, i)
-    #     # Update the highest accuracy model to identify best value for nodes
-    #     if accuracy > highest_acc:
-    #         highest_acc = accuracy
-    #         best_model = f'NN with {i} hidden nodes'
+    # Cross validate NN with 50, 500 and 1000 nodes
+    for i in [50, 500, 1000]:
+        print(f'Cross validating NN with {i} nodes')
+        accuracy = cv.cross_val('nn', data, i)
+        # Update the highest accuracy model to identify best value for nodes
+        if accuracy > highest_acc:
+            highest_acc = accuracy
+            best_model = f'NN with {i} hidden nodes'
 
-    # # Cross validate RF with 20, 500 and 10000 trees
-    # for i in [20, 500, 10000]:
-    #     print(f'Cross validating RF with {i} trees')
-    #     accuracy = cv.cross_val('rf', data, i)
-    #     # Update the highest accuracy model to identify best value for trees
-    #     if accuracy > highest_acc:
-    #         highest_acc = accuracy
-    #         best_model = f'RF with {i} trees'
+    # Cross validate RF with 20, 500 and 10000 trees
+    for i in [20, 500, 10000]:
+        print(f'Cross validating RF with {i} trees')
+        accuracy = cv.cross_val('rf', data, i)
+        # Update the highest accuracy model to identify best value for trees
+        if accuracy > highest_acc:
+            highest_acc = accuracy
+            best_model = f'RF with {i} trees'
 
-    # print(f'Best Model: {best_model}')
+    print(f'Best Model: {best_model}')
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,4 @@
 from section3 import Models
-from neural_net_scikit import NeuralNet
 import numpy as np
 import pandas as pd
 
@@ -48,10 +47,10 @@ class CrossVal():
 
     def cross_val_nn(self, model, node_count):
         # Initialise NN with x nodes
-        model.create_nn_model(node_count, 0.01)
+        model.create_nn_model(node_count, 0.0001)
 
         # Train the neural network with training set
-        model.train_nn(False)
+        model.train_nn(False, 100)
         return model.test_nn()
 
     def get_fold(self, fold, data):
