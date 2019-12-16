@@ -40,21 +40,22 @@ class Models:
         return x_batches, y_batches
 
     # Use the NeuralNetwork class to train a NN
-    def train_nn(self, plot):
-        EPOCHS = 10
-        total_acc = np.zeros(EPOCHS)
+    def train_nn(self, plot, epochs):
+        total_acc = np.zeros(epochs)
 
         # Run for multiple epochs to improve accuracy
-        for m in range(EPOCHS):
+        for m in range(epochs):
+            # Pass data through the network to get predictions
             self.nn.feed_forward(self.train_x)
 
             # Update the weights based on the data error
             self.nn.back_prop(self.train_x, self.train_y.reshape(self.train_y.shape[0],1))
 
-            acc = self.nn.get_accuracy(self.train_y)
+            # Get accuracy based on correctly classified samples
+            acc = self.nn.get_accuracy(self.train_y.reshape(self.train_y.shape[0],1))
    
             total_acc[m] = acc
-            print(f'Accuracy: {total_acc[m]}')
+            print(f'Epoch: {m + 1}, Accuracy: {total_acc[m]:.2f}')
 
         if plot:
             plt = Plot()
@@ -62,7 +63,6 @@ class Models:
 
     # Test the NN
     def test_nn(self):
-        #total = 0
         self.nn.feed_forward(self.test_x)
         total = self.nn.get_accuracy(self.test_y)
 
