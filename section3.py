@@ -54,7 +54,7 @@ class Models:
             acc = self.nn.get_accuracy(self.train_y)
    
             total_acc[m] = acc
-            # print(f'Accuracy: {total_acc[m]}')
+            print(f'Accuracy: {total_acc[m]}')
 
         if plot:
             plt = Plot()

@@ -43,11 +43,12 @@ class NeuralNet():
         # Process output layer
         output = self.weighted_sum(self.values_h2, self.weights_ho, self.bias_o)
         self.values_o = self.sigmoid(output)
+        #print(self.values_o)
 
     # Back propagation
     def back_prop(self, data, actual):
         # Get the difference between predicted and actual value
-        loss = np.subtract(actual, self.values_o)
+        loss = np.sqrt(np.power(np.subtract(actual, self.values_o) ,2))
 
         # Identify gradients for different weight matrices
         ho_delta = self.loss_der(self.values_o, loss)
@@ -56,13 +57,15 @@ class NeuralNet():
         
         # Update the weights and biases between each layer
         self.weights_ho -= self.update_weights(self.values_h2, ho_delta)
-        self.bias_o -= self.update_biases(ho_delta)
+        #self.bias_o -= self.update_biases(ho_delta)
 
         self.weights_hh -= self.update_weights(self.values_h1, hh_delta)
-        self.bias_h2 -= self.update_biases(hh_delta)
+        #self.bias_h2 -= self.update_biases(hh_delta)
 
         self.weights_ih -= self.update_weights(data, ih_delta)
-        self.bias_h1 -= self.update_biases(ih_delta)
+        #self.bias_h1 -= self.update_biases(ih_delta)
+
+        print(self.weights_ho)
 
     # Delta function
     def loss_der(self, values, loss):
@@ -70,11 +73,13 @@ class NeuralNet():
         
     # Update biases
     def update_biases(self, gradient):
-        return self.learning_rate * np.sum(gradient, axis=0)
+        for i, d in enumerate(gradient):
+            gradient[i] = self.learning_rate * d
+        return gradient.T
 
     # Update the weights using the learning rate
     def update_weights(self, inputs, gradient):
-        return self.learning_rate * np.dot(inputs.T, gradient) * -1
+        return self.learning_rate * np.dot(inputs.T, gradient)
 
     # Get the derivative of the sigmoid function
     def sigmoid_der(self, x):
@@ -86,7 +91,7 @@ class NeuralNet():
 
     def get_accuracy(self, actual):
         # If the error < 0.5, class as true positive/negative
-        loss = np.subtract(actual, self.values_o)
+        loss = np.sqrt(np.power(np.subtract(actual, self.values_o) ,2))
         acc = 0
 
         for i in loss:
