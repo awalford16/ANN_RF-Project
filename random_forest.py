@@ -11,7 +11,7 @@ class RandomForest:
     def forest_predict(self, test_x):
         return self.forest.predict(test_x)
 
-    def get_forest_error(self, train_x, train_y, test_x, test_y):
+    def get_forest_accuracy(self, train_x, train_y, test_x, test_y):
         train_accuracy = metrics.accuracy_score(train_y, self.forest_predict(train_x))
         test_accuracy = metrics.accuracy_score(test_y, self.forest_predict(test_x))
 

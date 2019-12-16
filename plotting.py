@@ -14,7 +14,10 @@ class Plot:
 
     def nn_acc_plot(self, acc):
         plt.figure()
-        plt.plot(acc)
+        
+        plots = sorted(acc.items())
+        x, y = zip(*plots)
+        plt.plot(x, y)
         plt.ylabel('Accuracy')
         plt.xlabel('Epoch')
         plt.savefig(os.path.join('images', 'epoch_acc.png'))

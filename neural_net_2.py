@@ -44,10 +44,6 @@ class NeuralNet():
         output = self.weighted_sum(self.values_h2, self.weights_ho, self.bias_o)
         self.values_o = self.sigmoid(output)
 
-    # Delta function
-    def loss_der(self, values, loss):
-        return (2 * loss) * self.sigmoid_der(values)
-
     # Back propagation
     def back_prop(self, data, actual):
         # Get the difference between predicted and actual value
@@ -68,6 +64,10 @@ class NeuralNet():
         self.weights_ih -= self.update_weights(data, ih_delta)
         self.bias_h1 -= self.update_biases(ih_delta)
 
+    # Delta function
+    def loss_der(self, values, loss):
+        return (2 * loss) * self.sigmoid_der(values)
+        
     # Update biases
     def update_biases(self, gradient):
         return self.learning_rate * np.sum(gradient, axis=0)

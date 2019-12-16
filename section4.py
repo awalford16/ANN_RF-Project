@@ -1,4 +1,5 @@
 from section3 import Models
+from neural_net_scikit import NeuralNet
 import numpy as np
 import pandas as pd
 
@@ -14,15 +15,19 @@ class CrossVal():
         # Loop through folds of data
         for x in range(self.folds):
             # Obtain fold data
-            train, test = self.get_fold(x, data)
-            model = Models(train.loc[:, train.columns != 'Status'], train['Status'], test.loc[:, test.columns != 'Status'], test['Status'])
+            train, val = self.get_fold(x, data)
+            train_x = train.loc[:, train.columns != 'Status']
+            train_y = train['Status']
+            val_x = val.loc[:, val.columns != 'Status']
+            val_y = val['Status']
+            model = Models(train_x, train_y, val_x, val_y)
         
             # Select which model to train
             if model_choice == 'rf':
                 # Store accuracy for fold
-                accuracies[x] = self.cross_val_rf(model, train, test, count)
+                accuracies[x] = self.cross_val_rf(model, count)
             elif model_choice == 'nn':
-                accuracies[x] = self.cross_val_nn(model, train, test, count)
+                accuracies[x] = self.cross_val_nn(model, count)
             else:
                 print(f'{model_choice} not recognised as a model.')
 
@@ -32,7 +37,7 @@ class CrossVal():
         return accuracies.mean()
 
     # Train and test random forest with segmented data
-    def cross_val_rf(self, model, train, test, tree_count):
+    def cross_val_rf(self, model, tree_count):
         # Create a random forest with x trees
         model.create_forest_model(tree_count)
 
@@ -41,9 +46,9 @@ class CrossVal():
         _, test = model.test_forest()
         return test
 
-    def cross_val_nn(self, model, train, test, node_count):
+    def cross_val_nn(self, model, node_count):
         # Initialise NN with x nodes
-        model.create_nn_model(node_count, 0.0001)
+        model.create_nn_model(node_count, 0.01)
 
         # Train the neural network with training set
         model.train_nn(False)
@@ -54,11 +59,11 @@ class CrossVal():
         size = int(len(data.values) / self.folds)
         start = size * fold
 
-        # Get test portion of data
-        test = data[start:(start+size)]
+        # Get validation portion of data
+        val = data[start:(start+size)]
 
         # Get training portion of data
         train = pd.concat([data[:start], data[(start+size):]], axis=0)
 
-        return train, test
+        return train, val
 

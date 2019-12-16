@@ -2,6 +2,7 @@ from data_processing import Data
 from plotting import Plot
 from section3 import Models
 from section4 import CrossVal
+from neural_net_scikit import NeuralNet
 import pandas as pd
 import pylab
 import numpy as np
@@ -23,7 +24,7 @@ def main():
     print(plant_data.get_feature_count())
     print(f"Variance: \n{plant_data.get_variance()}")
 
-    #plt = Plot()
+    plt = Plot()
     #print(plt.data_box_plot(plant_data.data, 'Status', 'Vibration_sensor_1'), pylab.show())
     #print(plt.data_density_plot(plant_data.data, 'Status', 'Vibration_sensor_2'), pylab.show())
 
@@ -37,18 +38,24 @@ def main():
     print('---------- Section 3 ----------')
     # Split data into train and test based on target variable Status
     train_x, train_y, test_x, test_y = plant_data.split_data(0.9, 'Status')
+    # epochs = [1,5,10,20]
+    # acc = {}
 
-    models = Models(train_x, train_y, test_x, test_y)
+    # for e in epochs:
+    #     # models = Models(train_x, train_y, test_x, test_y)
+    #     net = NeuralNet(500, 0.01, e)
 
-    # Create Neural Network
-    models.create_nn_model(500, 0.0001)
+    #     # Create Neural Network
+    #     # models.create_nn_model(500, 0.0001)
 
-    # Train Nerual Network with 500 nodes and 2 hidden layers
-    models.train_nn(True)
+    #     # Train Nerual Network with 500 nodes and 2 hidden layers
+    #     net.train_nn(train_x, train_y)
 
-    # Apply test data to NN
-    acc = models.test_nn()
-    print(f'NN Accuracy: {acc:.2f}')
+    #     # Apply test data to NN
+    #     acc[e] = net.test_nn(test_x, test_y)
+    #     print(f'Epochs: {e}, NN Accuracy: {acc[e]:.2f}')
+
+    # plt.nn_acc_plot(acc)
 
     # Create Random forest with 1000 trees and 5 or 50 leaf nodes
 

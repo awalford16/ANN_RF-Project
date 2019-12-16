@@ -73,6 +73,6 @@ class Models:
         self.rf.train_forest(self.train_x, self.train_y)
 
     def test_forest(self):
-        train, test = self.rf.get_forest_error(self.train_x, self.train_y, self.test_x, self.test_y)
+        train, test = self.rf.get_forest_accuracy(self.train_x, self.train_y, self.test_x, self.test_y)
         return train, test
     
