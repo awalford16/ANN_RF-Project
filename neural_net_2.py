@@ -58,10 +58,6 @@ class NeuralNet():
 
         self.weights_ih += self.update_weights(data, ih_delta)
         self.bias_h1 = self.update_biases(self.bias_h1, ih_delta)
-
-    # Error derivative with respect to output
-    def loss_der(self, values, loss):
-        return (2 * loss) * self.sigmoid_der(values)
         
     # Update biases
     def update_biases(self, bias, gradient):
@@ -72,8 +68,12 @@ class NeuralNet():
     # Update the weights using the learning rate
     def update_weights(self, inputs, gradient):
         return self.learning_rate * np.dot(inputs.T, gradient)
+        
+    # Error derivative with respect to output
+    def loss_der(self, values, loss):
+        return (2 * loss) * self.sigmoid_der(values)
 
-    # Get the derivative of the sigmoid function
+    # Get the sigmoid derivative
     def sigmoid_der(self, x):
         return x * (1 - x)
 

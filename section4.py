@@ -46,11 +46,11 @@ class CrossVal():
         return test
 
     def cross_val_nn(self, model, node_count):
-        # Initialise NN with x nodes
+        # Initialise NN with x nodes and a learning rate of 0.0001
         model.create_nn_model(node_count, 0.0001)
 
-        # Train the neural network with training set
-        model.train_nn(False, 100)
+        # Train the neural network with 100 epochs
+        model.train_nn(False, 150)
         return model.test_nn()
 
     def get_fold(self, fold, data):

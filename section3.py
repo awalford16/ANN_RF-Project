@@ -12,8 +12,8 @@ class Models:
         self.test_y = test_y.values
 
     def create_forest_model(self, trees):
-        # Initialise random forest model
-        self.rf = RandomForest(trees, 50)
+        # Initialise random forest model with a minimum of 5 samples per leaf
+        self.rf = RandomForest(trees, 5)
 
     def create_nn_model(self, hidden_nodes, lr):
         # Create a neural net with 2 hidden layers using standardised nuclear plant data
@@ -57,8 +57,8 @@ class Models:
             total_acc[m] = acc
 
             # Print out every 10 epochs
-            if (m + 1) % 10 == 0:
-                print(f'Epoch: {m + 1}, Accuracy: {total_acc[m]:.2f}')
+            #if (m + 1) % 10 == 0:
+                #print(f'Epoch: {m + 1}, Accuracy: {total_acc[m]:.2f}')
 
         if plot:
             plt = Plot()

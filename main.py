@@ -39,20 +39,21 @@ def main():
     # Split data into train and test based on target variable Status
     train_x, train_y, test_x, test_y = plant_data.split_data(0.9, 'Status')
 
-    # for e in epochs:
-    models = Models(train_x, train_y, test_x, test_y)
+    # # for e in epochs:
+    # models = Models(train_x, train_y, test_x, test_y)
     
-    # Create Neural Network
-    models.create_nn_model(500, 0.0001)
+    # # Create Neural Network
+    # models.create_nn_model(500, 0.0001)
 
-    # Train Nerual Network with 500 nodes and 2 hidden layers
-    models.train_nn(True, 150)
+    # # Train Nerual Network with 500 nodes and 2 hidden layers
+    # models.train_nn(True, 150)
 
-    # Apply test data to NN
-    acc = models.test_nn()
-    print(f'NN Testing Accuracy: {acc}')
+    # # Apply test data to NN
+    # acc = models.test_nn()
+    # print(f'NN Testing Accuracy: {acc}')
 
     # Create Random forest with 1000 trees and 5 or 50 leaf nodes
+    # models.create_rf_model(5)
 
     # Apply test data to random forest
 
