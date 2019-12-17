@@ -13,7 +13,7 @@ class Models:
 
     def create_forest_model(self, trees):
         # Initialise random forest model with a minimum of 5 samples per leaf
-        self.rf = RandomForest(trees, 5)
+        self.rf = RandomForest(trees, 10)
 
     def create_nn_model(self, hidden_nodes, lr):
         # Create a neural net with 2 hidden layers using standardised nuclear plant data
@@ -63,6 +63,9 @@ class Models:
         if plot:
             plt = Plot()
             plt.nn_acc_plot(total_acc)
+
+        # Return the training accuracy of the model
+        return total_acc[epochs - 1]
 
     # Test the NN
     def test_nn(self):

@@ -9,7 +9,8 @@ class CrossVal():
     # Loop through x folds and train model
     def cross_val(self, model_choice, data, count):
         # Create array to store accuracy score for each fold
-        accuracies = np.zeros(self.folds)
+        train_accuracies = np.zeros(self.folds)
+        test_accuracies = np.zeros(self.folds)
 
         # Loop through folds of data
         for x in range(self.folds):
@@ -24,16 +25,17 @@ class CrossVal():
             # Select which model to train
             if model_choice == 'rf':
                 # Store accuracy for fold
-                accuracies[x] = self.cross_val_rf(model, count)
+                train_accuracies[x], test_accuracies[x] = self.cross_val_rf(model, count)
             elif model_choice == 'nn':
-                accuracies[x] = self.cross_val_nn(model, count)
+                train_accuracies[x], test_accuracies[x]  = self.cross_val_nn(model, count)
             else:
                 print(f'{model_choice} not recognised as a model.')
 
-        print(f'Mean Accuracy of {model_choice.upper()}: {accuracies.mean():.2f}')
+        print(f'Mean Training Accuracy of {model_choice.upper()}: {train_accuracies.mean():.2f}')
+        print(f'Mean Testing Accuracy of {model_choice.upper()}: {test_accuracies.mean():.2f}')
 
         # Return the average mean accuracy
-        return accuracies.mean()
+        return test_accuracies.mean()
 
     # Train and test random forest with segmented data
     def cross_val_rf(self, model, tree_count):
@@ -42,16 +44,18 @@ class CrossVal():
 
         # Train model with segment of data and get accuracy with fold
         model.train_forest()
-        _, test = model.test_forest()
-        return test
+        
+        return model.test_forest()
 
     def cross_val_nn(self, model, node_count):
         # Initialise NN with x nodes and a learning rate of 0.0001
         model.create_nn_model(node_count, 0.0001)
 
         # Train the neural network with 100 epochs
-        model.train_nn(False, 150)
-        return model.test_nn()
+        train = model.train_nn(False, 150)
+
+        # Return the train and testing accuracies
+        return train, model.test_nn()
 
     def get_fold(self, fold, data):
         # Get approximate size of each fold

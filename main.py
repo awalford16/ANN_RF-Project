@@ -14,6 +14,9 @@ def main():
     
     # Normalise data to scale values
     # plant_data.norm_data()
+    print(f'Size of data: {plant_data.get_size()}')
+    print(f'Data Types: \n{plant_data.get_data_type()}')
+    print(f'Number of Samples for each Category: {plant_data.get_cat_count("Status")}')
 
     print(f"Mean: \n{plant_data.get_mean()}")
     print(f"Standard Deviation: \n{plant_data.get_stan_dev()}")
@@ -61,30 +64,30 @@ def main():
 
     print('---------- Section 4 ----------')
     # Get the training segment of data including testing set
-    data = pd.concat([train_x, train_y], axis=1)
-    cv = CrossVal(10)
-    highest_acc = 0.5
-    best_model = ''
+    # data = pd.concat([train_x, train_y], axis=1)
+    # cv = CrossVal(10)
+    # highest_acc = 0.5
+    # best_model = ''
 
-    # Cross validate NN with 50, 500 and 1000 nodes
-    for i in [50, 500, 1000]:
-        print(f'Cross validating NN with {i} nodes')
-        accuracy = cv.cross_val('nn', data, i)
-        # Update the highest accuracy model to identify best value for nodes
-        if accuracy > highest_acc:
-            highest_acc = accuracy
-            best_model = f'NN with {i} hidden nodes'
+    # # Cross validate NN with 50, 500 and 1000 nodes
+    # for i in [50, 500, 1000]:
+    #     print(f'Cross validating NN with {i} nodes')
+    #     test_acc = cv.cross_val('nn', data, i)
+    #     # Update the highest accuracy model to identify best value for nodes
+    #     if test_acc > highest_acc:
+    #         highest_acc = test_acc
+    #         best_model = f'NN with {i} hidden nodes'
 
-    # Cross validate RF with 20, 500 and 10000 trees
-    for i in [20, 500, 10000]:
-        print(f'Cross validating RF with {i} trees')
-        accuracy = cv.cross_val('rf', data, i)
-        # Update the highest accuracy model to identify best value for trees
-        if accuracy > highest_acc:
-            highest_acc = accuracy
-            best_model = f'RF with {i} trees'
+    # # Cross validate RF with 20, 500 and 10000 trees
+    # for i in [20, 500, 10000]:
+    #     print(f'Cross validating RF with {i} trees')
+    #     test_acc = cv.cross_val('rf', data, i)
+    #     # Update the highest accuracy model to identify best value for trees
+    #     if test_acc > highest_acc:
+    #         highest_acc = test_acc
+    #         best_model = f'RF with {i} trees'
 
-    print(f'Best Model: {best_model}')
+    # print(f'Best Model: {best_model}')
 
 if __name__ == '__main__':
     main()

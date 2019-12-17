@@ -7,6 +7,18 @@ class Data:
         # Create data property to store CSV data within a dataframe
         self.data = self.read_data(csv_file)
 
+    # Get the size of the data
+    def get_size(self):
+        return self.data.shape
+
+    # Get the data type of each feature
+    def get_data_type(self):
+        return self.data.dtypes
+
+    # Return the count for each category
+    def get_cat_count(self, category):
+        return self.data.groupby(category)[category].count()
+
     def read_data(self, file_name):
         df = pd.read_csv(os.path.join('data', file_name))
         return df
